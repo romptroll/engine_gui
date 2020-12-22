@@ -36,6 +36,10 @@ pub struct Button {
     pub pressed: bool,
 }
 
+impl Button {
+    
+}
+
 impl Bounds for Button {
     fn bounds(&self) -> (f32, f32, f32, f32) {
         (self.x, self.y, self.width, self.height)

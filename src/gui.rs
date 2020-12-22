@@ -253,8 +253,11 @@ impl GUI {
         let y = bounds.1;
         let width = bounds.2;
         let height = bounds.3;
-        self.mouse_x >= x && self.mouse_x < x + width && 
-        self.mouse_y >= y && self.mouse_y < y + height 
+        let g = &self.graphics;
+        let mouse_x = self.mouse_x * (g.scaling().0) + (g.translation().0);
+        let mouse_y = self.mouse_y * (g.scaling().1) + (g.translation().1);
+        mouse_x >= x && mouse_x < x + width && 
+        mouse_y >= y && mouse_y < y + height 
     }
 
     pub fn update(&mut self) {
