@@ -207,8 +207,13 @@ impl GUI {
     }
 
     fn draw_text_align(&mut self, x: f32, y: f32, width: f32, height: f32, text: &str) {
-        let mut x = x;
-        let mut y = y;
+        let translation = self.graphics.translation();
+        let scaling = self.graphics.scaling();
+
+        let mut x = x * scaling.0 + translation.0;
+        let mut y = y * scaling.1 + translation.1;
+        let width  = width  * scaling.0;
+        let height = height * scaling.1;
 
         let total_text_width = self.graphics.font().text_width(text) / self.graphics.frame_width() as f32;
         
@@ -240,12 +245,6 @@ impl GUI {
                 y += height - self.graphics.font().height() as f32 / self.graphics.frame_height() as f32;
             }
         }
-
-        let translation = self.graphics.translation();
-        let scaling = self.graphics.scaling();
-
-        x = x * scaling.0 + translation.0;
-        y = y * scaling.1 + translation.1;
 
         self.graphics.set_translation(0.0, 0.0);
         self.graphics.set_scale(1.0, 1.0);

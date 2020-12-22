@@ -190,7 +190,7 @@ mod tests {
         gui.style.foreground_texture = TextureRegion::new(0, texture.height()-16, 16, 16, &texture);
         gui.style.background_texture = TextureRegion::new(16, texture.height()-16, 16, 16, &texture);
 
-        //gui.style.text_align = gui::TextAlign::Center;
+        gui.style.text_align = gui::TextAlign::Center;
 
         while !win.should_close() {
             gui.clear();
