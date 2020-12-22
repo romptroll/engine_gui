@@ -241,7 +241,16 @@ impl GUI {
             }
         }
 
+        let translation = self.graphics.translation();
+        let scaling = self.graphics.scaling();
+
+        self.graphics.set_translation(0.0, 0.0);
+        self.graphics.set_scale(1.0, 1.0);
+
         self.graphics.draw_string(&text[..num_chars], x, y);
+        
+        self.graphics.set_translation(translation.0, translation.1);
+        self.graphics.set_scale(scaling.0, scaling.1);
     }
 
     pub fn clear(&mut self) {
