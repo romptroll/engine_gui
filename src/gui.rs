@@ -167,7 +167,9 @@ impl GUI {
         self.graphics.fill_rect(slider.x, slider.y, slider.width, slider.height);
         
         if slider.selected {
-            slider.val = ((self.mouse_x-box_w/2.0).max(slider.x).min(slider.x+slider.width-box_w) - slider.x) / (slider.width - box_w);
+            let g = &self.graphics;
+            let mouse_x = (self.mouse_x - g.translation().0) / g.scaling().0;
+            slider.val = ((mouse_x-box_w/2.0).max(slider.x).min(slider.x+slider.width-box_w) - slider.x) / (slider.width - box_w);
             self.graphics.set_color(self.style.foreground_color);
             self.graphics.texture(self.style.foreground_texture.clone());
         } else {
