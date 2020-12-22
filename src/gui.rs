@@ -244,6 +244,9 @@ impl GUI {
         let translation = self.graphics.translation();
         let scaling = self.graphics.scaling();
 
+        x = x * scaling.0 + translation.0;
+        y = y * scaling.1 + translation.1;
+
         self.graphics.set_translation(0.0, 0.0);
         self.graphics.set_scale(1.0, 1.0);
 

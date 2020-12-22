@@ -144,4 +144,68 @@ mod tests {
             win.swap_buffers();
         }
     }
+
+    #[test]
+    fn scaled() {
+        let mut win  = Window::new(600, 400, "").unwrap();
+        win.make_current();
+        init_gl(&mut win);
+        unsafe {
+            enable(Capability::Blending);
+            blend_func(BlendMode::SrcAlpha, BlendMode::OneMinusSrcAlpha);
+        }
+        let mut gui = gui::GUI::new(&mut win);
+
+        let mut but_1 = Button {
+            x: 0.0,
+            y: 0.0,
+            width: 128.0,
+            height: 64.0,
+            text: String::from("press 1"),
+            pressed: false,
+        };
+
+        let mut but_2 = Button {
+            x: 0.0,
+            y: 128.0,
+            width: 128.0,
+            height: 64.0,
+            text: String::from("press 2"),
+            pressed: false,
+        };
+
+        let mut text_box = TextBox {
+            x: 140.0,
+            y: 128.0,
+            width: 128.0,
+            height: 64.0,
+            text: String::new(),
+            selected: false,
+            keys: Vec::new(),
+        };
+        let texture = Texture::from_file("res/textures/tile_sheet.png");
+
+        gui.graphics.set_font(Font::new("res/fonts/arial.ttf", 64));
+
+        gui.style.foreground_texture = TextureRegion::new(0, texture.height()-16, 16, 16, &texture);
+        gui.style.background_texture = TextureRegion::new(16, texture.height()-16, 16, 16, &texture);
+
+        //gui.style.text_align = gui::TextAlign::Center;
+
+        while !win.should_close() {
+            gui.clear();
+
+            gui.graphics.set_translation(-1.0, -1.0);
+            gui.graphics.set_scale(2.0 / win.get_width() as f32, 2.0 / win.get_height() as f32);
+            
+            gui.button(&mut but_1);
+            gui.button(&mut but_2);
+
+            gui.text_box(&mut text_box);
+            
+            gui.update();
+            win.poll_events();
+            win.swap_buffers();
+        }
+    }
 }
