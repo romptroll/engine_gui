@@ -82,7 +82,6 @@ pub struct TextBox {
     pub height: f32, 
     pub text: String, 
     pub selected: bool, 
-    pub keys: Vec<Key> //TODO change keys to be an action key pair. Reason: it opens more possibilities to do actions depending on if a key is presse, released or hold down
 }
 
 impl Bounds for TextBox {

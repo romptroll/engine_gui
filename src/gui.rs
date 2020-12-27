@@ -82,6 +82,10 @@ pub struct GUI {
 
     key_listener: bus::BusReader::<(Key, Action)>,
 
+    key_capslock: bool,
+    key_shift_left: bool,
+    key_shift_right: bool,
+
     mouse_move_listener : bus::BusReader::<(f32, f32)>,
     mouse_listener      : bus::BusReader::<(Mouse, Action)>,
 
@@ -90,6 +94,10 @@ pub struct GUI {
 
     mouse_is_pressed: bool,
     mouse_just_pressed: bool,
+
+    text_chars: Vec<char>,
+
+    text_listener: bus::BusReader::<char>,
 }
 
 impl GUI {
@@ -102,6 +110,10 @@ impl GUI {
 
             key_listener: win.create_key_listener(),
 
+            key_capslock: false,
+            key_shift_left: false,
+            key_shift_right: false,
+
             mouse_move_listener : win.create_mouse_move_listener(),
             mouse_listener      : win.create_mouse_listener(),
 
@@ -110,6 +122,10 @@ impl GUI {
 
             mouse_is_pressed: false,
             mouse_just_pressed: false,
+
+            text_chars: Vec::new(),
+
+            text_listener: win.create_text_listener(),
         }
     }
 
@@ -193,8 +209,14 @@ impl GUI {
             self.graphics.set_color(self.style.foreground_color);
             self.graphics.texture(self.style.foreground_texture.clone());
 
-            for ka in &self.key_actions {
-                text_box.keys.push(ka.clone());
+            for key in &self.key_actions {
+                if *key == Key::Backspace {
+                    text_box.text.pop();
+                } 
+            }
+
+            for ch in &self.text_chars {
+                text_box.text.push(*ch);
             }
         } else {
             self.graphics.set_color(self.style.background_color);
@@ -219,12 +241,13 @@ impl GUI {
 
         let total_text_width = self.graphics.font().text_width(text) / self.graphics.frame_width() as f32;
         
-        let mut num_chars = text.len();
+        let chars = text.chars().collect::<Vec<char>>();
+        let mut num_chars = chars.len();
         let mut text_width = total_text_width;
 
         while text_width > width {
             num_chars -= 1;
-            text_width = self.graphics.font().text_width(&text[..num_chars]) / self.graphics.frame_width() as f32;
+            text_width = self.graphics.font().text_width(&chars[..num_chars].iter().collect::<String>()) / self.graphics.frame_width() as f32;
         } 
 
         match self.style.text_align {
@@ -251,7 +274,7 @@ impl GUI {
         self.graphics.set_translation(0.0, 0.0);
         self.graphics.set_scale(1.0, 1.0);
 
-        self.graphics.draw_string(&text[..num_chars], x, y);
+        self.graphics.draw_string(&chars[..num_chars].iter().collect::<String>(), x, y);
         
         self.graphics.set_translation(translation.0, translation.1);
         self.graphics.set_scale(scaling.0, scaling.1);
@@ -328,10 +351,33 @@ impl GUI {
                 Ok((key, action)) => {
                     match action {
                         Action::Press => {
+                            if key == Key::LeftShift  { self.key_shift_left     = true; }
+                            if key == Key::RightShift { self.key_shift_right    = true; }
+                            if key == Key::CapsLock   { self.key_capslock      ^= true; }
+
                             self.key_actions.push(key);
+                        }
+                        Action::Release => {
+                            if key == Key::LeftShift  { self.key_shift_left     = false; }
+                            if key == Key::RightShift { self.key_shift_right    = false; }
                         }
                         _ => {}
                     }
+                },
+                Err(_) => loop_done = true
+            }
+        }
+
+
+        //Make sure char recived from last update is not used again
+        self.text_chars.clear();
+
+        //check if any char has been recived
+        let mut loop_done = false;
+        while !loop_done {
+            match self.text_listener.try_recv() {
+                Ok(ch) => {
+                    self.text_chars.push(ch);
                 },
                 Err(_) => loop_done = true
             }

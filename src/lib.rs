@@ -81,7 +81,6 @@ mod tests {
             height: 0.5,
             text: String::new(),
             selected: false,
-            keys: Vec::new(),
         };
 
         let mut check_box = CheckBox {
@@ -125,20 +124,6 @@ mod tests {
 
             gui.text_box(&mut text_box);
 
-            for key in &text_box.keys {
-                let c: char = unsafe { std::mem::transmute(key.clone()) };
-
-                if c >= 65 as char && c <= 90 as char { //ASCII range for all letters
-                    text_box.text.push(c);
-                }
-
-                if *key == Key::Backspace {
-                    text_box.text.pop();
-                }
-            }
-
-            text_box.keys.clear();
-
             gui.update();
             win.poll_events();
             win.swap_buffers();
@@ -181,8 +166,8 @@ mod tests {
             height: 64.0,
             text: String::new(),
             selected: false,
-            keys: Vec::new(),
         };
+        
         let texture = Texture::from_file("res/textures/tile_sheet.png");
 
         gui.graphics.set_font(Font::new("res/fonts/arial.ttf", 64));
