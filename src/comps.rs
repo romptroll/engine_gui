@@ -37,7 +37,16 @@ pub struct Button {
 }
 
 impl Button {
-    
+    pub fn new() -> Button {
+        Button {
+            x: 0.0,
+            y: 0.0,
+            width: 1.0,
+            height: 1.0,
+            text: String::new(),
+            pressed: false,
+        }
+    }
 }
 
 impl Bounds for Button {
@@ -52,6 +61,18 @@ pub struct CheckBox {
     pub width: f32,
     pub height: f32,
     pub pressed: bool,
+}
+
+impl CheckBox {
+    pub fn new() -> CheckBox {
+        CheckBox {
+            x: 0.0,
+            y: 0.0,
+            width: 1.0,
+            height: 1.0,
+            pressed: false,
+        }
+    }
 }
 
 impl Bounds for CheckBox {
@@ -69,6 +90,19 @@ pub struct Slider {
     pub selected: bool,
 }
 
+impl Slider {
+    pub fn new() -> Slider {
+        Slider {
+            x: 0.0,
+            y: 0.0,
+            width: 1.0,
+            height: 1.0,
+            val: 0.0,
+            selected: false,
+        }
+    }
+}
+
 impl Bounds for Slider {
     fn bounds(&self) -> (f32, f32, f32, f32) {
         (self.x, self.y, self.width, self.height)
@@ -82,6 +116,19 @@ pub struct TextBox {
     pub height: f32, 
     pub text: String, 
     pub selected: bool, 
+}
+
+impl TextBox {
+    pub fn new() -> TextBox {
+        TextBox {
+            x: 0.0,
+            y: 0.0,
+            width: 1.0,
+            height: 1.0,
+            text: String::new(),
+            selected: false,
+        }
+    }
 }
 
 impl Bounds for TextBox {
